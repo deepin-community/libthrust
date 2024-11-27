@@ -1,0 +1,7 @@
+---
+include:
+  - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/recipes/debian.yml
+
+variables:
+  # does not complete within 3 hours
+  SALSA_CI_DISABLE_AUTOPKGTEST: 1

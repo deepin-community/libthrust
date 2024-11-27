@@ -1,0 +1,3 @@
+usr/include/
+usr/share/cmake/thrust/README.md	usr/share/doc/libthrust-dev/cmake/
+usr/share/cmake/thrust/*.cmake

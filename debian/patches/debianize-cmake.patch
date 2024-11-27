@@ -1,0 +1,29 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: cmake fixup for running autopkgtest
+Forwarded: not-needed
+
+--- a/cmake/ThrustCudaConfig.cmake
++++ b/cmake/ThrustCudaConfig.cmake
+@@ -82,6 +82,11 @@ if (THRUST_DISABLE_ARCH_BY_DEFAULT OR TH
+   set(option_init OFF)
+ endif()
+ 
++if (CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 11.8)
++  set(THRUST_ENABLE_COMPUTE_90 OFF)
++  set(THRUST_ENABLE_COMPUTE_FUTURE OFF)
++endif()
++
+ set(num_archs_enabled 0)
+ foreach (arch IN LISTS THRUST_KNOWN_COMPUTE_ARCHS)
+   set(this_option_init ${option_init})
+--- a/thrust/cmake/thrust-config.cmake
++++ b/thrust/cmake/thrust-config.cmake
+@@ -672,7 +672,7 @@ endif()
+ 
+ set(_THRUST_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}" CACHE INTERNAL
+   "Location of thrust-config.cmake"
+-  FORCE
++  #FORCE
+ )
+ 
+ # Internal target that actually holds the Thrust interface. Used by all other Thrust targets.

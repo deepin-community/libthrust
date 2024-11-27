@@ -1,0 +1,6 @@
+# upstream provides no signatures
+debian-watch-does-not-check-openpgp-signature
+
+# running tests would require cuda capable hardware and using the
+# proprietary kernel module
+superficial-tests
