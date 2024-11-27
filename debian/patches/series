@@ -1,0 +1,2 @@
+install-cmake-bits-to-DATADIR.patch
+debianize-cmake.patch

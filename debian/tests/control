@@ -1,0 +1,121 @@
+Test-Command: cmake -Wno-dev -S debian/tests/cmake -B $AUTOPKGTEST_TMP
+Features: test-name=cmake_find_package_Thrust
+Depends:
+ @,
+ cmake,
+ g++,
+ libtbb-dev,
+Restrictions:
+ superficial,
+
+Test-Command: debian/tests/upstream-testsuite CPP 17 g++-12
+Features: test-name=run_testsuite_CPP_C++17_g++-12
+Depends:
+ @,
+ cmake,
+ make,
+ libtbb-dev,
+ g++-12,
+Restrictions:
+ superficial,
+ allow-stderr,
+ flaky,
+
+Test-Command: debian/tests/upstream-testsuite CPP 17 g++-11
+Features: test-name=run_testsuite_CPP_C++17_g++-11
+Depends:
+ @,
+ cmake,
+ make,
+ libtbb-dev,
+ g++-11,
+Restrictions:
+ superficial,
+ allow-stderr,
+ flaky,
+
+Test-Command: debian/tests/upstream-testsuite CPP 14
+Features: test-name=run_testsuite_CPP_C++14
+Depends:
+ @,
+ cmake,
+ make,
+ libtbb-dev,
+ g++,
+Restrictions:
+ superficial,
+ allow-stderr,
+ flaky,
+
+Test-Command: debian/tests/upstream-testsuite TBB 17
+Features: test-name=run_testsuite_TBB_C++17
+Depends:
+ @,
+ cmake,
+ make,
+ libtbb-dev,
+ g++,
+Restrictions:
+ superficial,
+ allow-stderr,
+ flaky,
+
+Test-Command: debian/tests/upstream-testsuite CPP/CUDA 17 cuda-g++
+Features: test-name=compile_testsuite_CPP_CUDA_C++17_cuda-g++
+Architecture: amd64
+Depends:
+ @,
+ cmake,
+ make,
+ libtbb-dev,
+ nvidia-cuda-toolkit-gcc,
+Restrictions:
+ superficial,
+ allow-stderr,
+
+Test-Command: debian/tests/upstream-testsuite TBB/CUDA 17 cuda-g++
+Features: test-name=compile_testsuite_TBB_CUDA_C++17_cuda-g++
+Architecture: amd64
+Depends:
+ @,
+ cmake,
+ make,
+ libtbb-dev,
+ nvidia-cuda-toolkit-gcc,
+Restrictions:
+ superficial,
+ allow-stderr,
+ flaky,
+
+Test-Command: debian/tests/upstream-testsuite CPP/CUDA 17 g++-11
+Features: test-name=compile_testsuite_CPP_CUDA_C++17_g++-11
+Architecture: amd64
+Depends:
+ @,
+ cmake,
+ make,
+ libtbb-dev,
+ g++-11,
+ nvidia-cuda-toolkit-gcc,
+Restrictions:
+ superficial,
+ allow-stderr,
+ flaky,
+ skippable,
+
+Test-Command: debian/tests/upstream-testsuite TBB/CUDA 17 g++-11
+Features: test-name=compile_testsuite_TBB_CUDA_C++17_g++-11
+Architecture: amd64
+Depends:
+ @,
+ cmake,
+ make,
+ libtbb-dev,
+ g++-11,
+ nvidia-cuda-toolkit-gcc,
+Restrictions:
+ superficial,
+ allow-stderr,
+ flaky,
+ skippable,
+

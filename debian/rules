@@ -1,4 +1,34 @@
 #!/usr/bin/make -f
 
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+include /usr/share/dpkg/pkg-info.mk
+
 %:
-	dh $@
+	dh $@ --without single-binary --buildsystem cmake
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DTHRUST_DEVICE_SYSTEM=CPP \
+		-DTHRUST_CPP_DIALECT=17 \
+		-DTHRUST_INSTALL_CUB_HEADERS=OFF \
+		-DTHRUST_INSTALL_LIBCUDACXX_HEADERS=OFF \
+		-Wno-dev
+
+# for debhelper-compat (<< 15)
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/tmp
+
+execute_after_dh_auto_install:
+	# remove empty directories
+	find debian/tmp -depth -type d -exec sh -c 'd="{}"; rmdir --ignore-fail-on-non-empty "$$d" ; test -d "$$d" || echo "removed $$d"' \;
+
+override_dh_gencontrol:
+	dh_gencontrol -- -V'cub:Version=$(word 1,$(subst -, ,$(DEB_VERSION_UPSTREAM)))'
+
+
+debian/tests/control: debian/tests/control.sh
+	sh $< > $@
+
+clean: debian/tests/control

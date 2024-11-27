@@ -1,0 +1,74 @@
+#!/bin/sh
+set -e
+
+host=
+device=${1:-CPP}
+
+CPP=ON
+CUDA=OFF
+TBB=ON
+OMP=ON
+case $device in
+	CUDA)
+		CUDA=ON
+		;;
+	*/CUDA)
+		host=${device%/CUDA}
+		device=CUDA
+		CPP=OFF
+		CUDA=ON
+		TBB=OFF
+		OMP=OFF
+		eval ${host}=ON
+		;;
+esac
+
+CPP14=OFF
+CPP17=OFF
+eval CPP${2:-17}=ON
+
+CXX="${3:-g++}"
+
+p=" ${DEB_BUILD_OPTIONS} "
+p=${p##* parallel=}
+p=${p%% *}
+p=${p:-$(nproc)}
+
+if [ "$CXX" != "cuda-g++" ]; then
+	if [ "$(readlink -f /usr/bin/$CXX)" = "$(readlink -f /usr/bin/cuda-g++)" ]; then
+		# do not rerun the cuda-g++ test
+		exit 77
+	fi
+fi
+
+AUTOPKGTEST_TMP=${AUTOPKGTEST_TMP:-$(mktemp -d)}
+
+set -x
+
+cmake \
+	-S . \
+	-B $AUTOPKGTEST_TMP \
+	${3:+-DCMAKE_CXX_COMPILER=$3} \
+	-DTHRUST_ENABLE_MULTICONFIG=ON \
+	-DTHRUST_MULTICONFIG_ENABLE_DIALECT_CPP11=OFF \
+	-DTHRUST_MULTICONFIG_ENABLE_DIALECT_CPP14=$CPP14 \
+	-DTHRUST_MULTICONFIG_ENABLE_DIALECT_CPP17=$CPP17 \
+	-DTHRUST_MULTICONFIG_ENABLE_SYSTEM_CPP=$CPP \
+	-DTHRUST_MULTICONFIG_ENABLE_SYSTEM_CUDA=$CUDA \
+	-DTHRUST_MULTICONFIG_ENABLE_SYSTEM_TBB=$TBB \
+	-DTHRUST_MULTICONFIG_ENABLE_SYSTEM_OMP=$OMP \
+	-DTHRUST_MULTICONFIG_WORKLOAD=LARGE \
+	${host:+-DTHRUST_HOST_SYSTEM_OPTIONS=$host} \
+	-DTHRUST_DEVICE_SYSTEM_OPTIONS=$device \
+	-D_THRUST_CMAKE_DIR=/usr/share/cmake/thrust \
+	-DTHRUST_INSTALL_CUB_HEADERS=OFF \
+	-DTHRUST_INSTALL_LIBCUDACXX_HEADERS=OFF \
+	-Wno-dev
+
+cd $AUTOPKGTEST_TMP
+
+make ${p:+-j $p}
+
+test "$device" = "CUDA" || ctest --output-on-failure
+
+make clean
